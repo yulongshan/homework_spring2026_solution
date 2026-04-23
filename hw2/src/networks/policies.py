@@ -72,10 +72,11 @@ class MLPPolicy(nn.Module):
         """
         if self.discrete:
             # TODO: define the forward pass for a policy with a discrete action space.
-            pass
+            action_logits = self.logits_net(obs)
+            distributions.Categorical(action_logits)
         else:
             # TODO: define the forward pass for a policy with a continuous action space.
-            pass
+            action_mean = self.mean_net(obs)
 
     def update(self, obs: np.ndarray, actions: np.ndarray, *args, **kwargs) -> dict:
         """
@@ -101,9 +102,10 @@ class MLPPolicyPG(MLPPolicy):
 
         # TODO: compute the policy gradient actor loss
         loss = None
-
+        self.optimizer.zero_grad()
+        loss.backward()
         # TODO: perform an optimizer step
-        pass
+        self.optimizer.step()
 
         return {
             "Actor Loss": loss.item(),

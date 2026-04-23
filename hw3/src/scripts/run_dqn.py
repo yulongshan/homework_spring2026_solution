@@ -87,7 +87,7 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
         epsilon = exploration_schedule.value(step)
 
         # TODO(Section 2.4): Compute action
-        action = None
+        action = agent.get_action(observation, epsilon)
         # ENDTODO
 
         next_observation, reward, done, info = env.step(action)
@@ -128,13 +128,19 @@ def run_training_loop(config: dict, logger: Logger, args: argparse.Namespace):
         # Main DQN training loop
         if step >= config["learning_starts"]:
             # TODO(Section 2.4): Sample config["batch_size"] samples from the replay buffer
-            batch = None
+            batch = replay_buffer.sample(config["batch_size"])
             # ENDTODO
 
             batch = ptu.from_numpy(batch)
 
             # TODO(Section 2.4): Train the agent.
-            update_info = None
+
+            update_info = agent.update(batch.get('observations',torch.tensor([])),
+                                       batch.get('actions',torch.tensor([])),
+                                       batch.get('rewards',torch.tensor([])),
+                                       batch.get('next_observations',torch.tensor([])),
+                                       batch.get('dones',torch.tensor([])),
+                                       step)
             # ENDTODO
 
             # Logging code
